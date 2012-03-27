@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="31" height="21" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Pee Parade" tilewidth="32" tileheight="32">
+  <image source="tiles.png" trans="ffffff" width="128" height="256"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="31" height="21">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+NkYGDgGgDMDcS8QMw3AJgfzW4hOmBsdoPYjHTAvFSym40GdrNS2a+sJNg9FMJ81G7a200oXROT7oeiv0ftpp3dQ6Fco0V5Tu8wB2F6tFdwtR3o3W4RZKBPewUdCwMxAFJr5IIsCgAA
+  </data>
+ </layer>
+</map>
