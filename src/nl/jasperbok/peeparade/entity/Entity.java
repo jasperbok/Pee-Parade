@@ -12,6 +12,7 @@ import org.newdawn.slick.geom.Vector2f;
 public abstract class Entity {
 	public Level level;
 	public Vector2f position = new Vector2f(0, 0);
+	public Vector2f previousPosition = new Vector2f(0, 0);
 	public Vector2f velocity = new Vector2f(0, 0);
 	public Rectangle boundingBox;
 	public boolean isBlocking = true;
@@ -24,6 +25,14 @@ public abstract class Entity {
 	
 	public Entity() throws SlickException {
 		
+	}
+	
+	/**
+	 * Updates the Entities boundingBox. This function is only a dummy and should
+	 * be overridden in subclasses.
+	 */
+	public void updateBoundingBox() {
+		boundingBox.setBounds(0, 0, 0, 0);
 	}
 	
 	/**
@@ -51,14 +60,17 @@ public abstract class Entity {
 	}
 	
 	public void setPosition(float xPos, float yPos) {
+		previousPosition = position.copy();
 		position.set(xPos, yPos);
 	}
 	
 	public void setXPosition(float xPos) {
+		previousPosition = position.copy();
 		position.set(xPos, position.getY());
 	}
 	
 	public void setYPosition(float yPos) {
+		previousPosition = position.copy();
 		position.set(position.getX(), yPos);
 	}
 	

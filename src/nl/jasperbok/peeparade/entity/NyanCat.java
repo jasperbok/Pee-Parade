@@ -12,6 +12,14 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class NyanCat extends Cat {
 	private float walkSpeed = 0.15f;
+	// Variables for peeing.
+	private int peeTime = 1000;
+	private int timePeed = 0;
+	private boolean peeing = false;
+	// Variables for drinking.
+	private int drinkTime = 1000;
+	private int timeDrank = 0;
+	private boolean drinking = false;
 	
 	// Sprites and animations.
 	private SpriteSheet sprites;
@@ -19,6 +27,7 @@ public class NyanCat extends Cat {
 	private Animation walkLeftAnimation;
 	private Animation walkUpAnimation;
 	private Animation walkDownAnimation;
+	private Animation peeAnimation;
 	private Animation idleAnimation;
 	private Animation currentAnimation;
 	
@@ -35,17 +44,33 @@ public class NyanCat extends Cat {
 		for (int i = 0; i < 3; i++) {
 			walkLeftAnimation.addFrame(sprites.getSprite(i, 0).getFlippedCopy(true, false), 150);
 		}
-		walkUpAnimation = walkRightAnimation;
-		walkDownAnimation = walkLeftAnimation;
+		walkUpAnimation = new Animation();
+		for (int i = 0; i < 3; i++) {
+			walkUpAnimation.addFrame(sprites.getSprite(i, 1), 150);
+		}
+		walkDownAnimation = new Animation();
+		for (int i = 0; i < 3; i++) {
+			walkDownAnimation.addFrame(sprites.getSprite(i, 2), 150);
+		}
+		peeAnimation = new Animation();
+		for (int i = 0; i < 3; i++) {
+			peeAnimation.addFrame(sprites.getSprite(i, 3), 150);
+		}
 		
 		position = new Vector2f(200, 300);
 		currentAnimation = walkRightAnimation;
 	}
 	
-	public void update(Input input, int delta) throws SlickException {
+	public void updateBoundingBox() {
 		boundingBox.setBounds(position.x, position.y, currentAnimation.getCurrentFrame().getWidth(), currentAnimation.getCurrentFrame().getHeight());
+	}
+	
+	public void update(Input input, int delta) throws SlickException {
+		updateBoundingBox();
 		
-		if (playerType == "human") {
+		// If Nyancat is controlled by a human, check for keypresses,
+		// but only if Nyancat is not peeing or drinking.
+		if (playerType == "human" && !peeing && !drinking) {
 			if (input.isKeyDown(leftKey)) velocity.set(-walkSpeed * delta, velocity.getY());
 			if (input.isKeyDown(rightKey)) velocity.set(walkSpeed * delta, velocity.getY());
 			if (!input.isKeyDown(leftKey) && !input.isKeyDown(rightKey)) velocity.set(0, velocity.getY());
@@ -53,9 +78,13 @@ public class NyanCat extends Cat {
 			if (input.isKeyDown(upKey)) velocity.set(velocity.getX(), -walkSpeed * delta);
 			if (input.isKeyDown(downKey)) velocity.set(velocity.getX(), walkSpeed * delta);
 			if (!input.isKeyDown(upKey) && !input.isKeyDown(downKey)) velocity.set(velocity.getX(), 0);
+			
+			if (input.isKeyDown(actionKey)) {
+				peeing = true;
+			}
 		}
 		
-		// Update the current animation.
+		// Update the current animation depending on the velocity.
 		if (velocity.getY() > 0) {
 			currentAnimation = walkDownAnimation;
 		} else if (velocity.getY() < 0) {
@@ -66,6 +95,18 @@ public class NyanCat extends Cat {
 			currentAnimation = walkRightAnimation;
 		} else if (velocity.getX() < 0) {
 			currentAnimation = walkLeftAnimation;
+		}
+		
+		if (velocity.getX() == 0 && velocity.getY() == 0) currentAnimation = walkRightAnimation;
+		
+		if (peeing) {
+			velocity = new Vector2f(0, 0);
+			currentAnimation = peeAnimation;
+			timePeed += delta;
+			if (timePeed >= peeTime) {
+				peeing = false;
+				timePeed = 0;
+			}
 		}
 	}
 	
